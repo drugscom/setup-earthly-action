@@ -1,0 +1,17 @@
+name: 'Setup Earthly'
+description: 'Setup Earthy build system'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
+inputs:
+  version:
+    description: 'Earthly version to install. Must be an specific version or "latest".'
+    required: true
+    default: 'latest'
+  download-latest:
+    description: 'Set this option to true if you want the action to always download the latest available version that satisfies the version spec even if a cached version is available'
+    default: 'false'
+    required: true
+  matchers:
+    description: 'If set, the installer will only enable problem matchers for the specified tools.'
+    required: false

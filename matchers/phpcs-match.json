@@ -1,0 +1,17 @@
+{
+	"problemMatcher": [
+		{
+			"owner": "phpcs",
+			"pattern": [
+				{
+					"regexp": "\\+phpcs.*failed.*\\s\\|\\s(?:/app/)?([^\\s].*):(\\d+):(\\d+):\\s(\\w+)\\s-\\s(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"severity": 4,
+					"message": 5
+				}
+			]
+		}
+	]
+}
