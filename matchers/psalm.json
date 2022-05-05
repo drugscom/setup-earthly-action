@@ -4,7 +4,7 @@
 			"owner": "psalm",
 			"pattern": [
 				{
-					"regexp": "\\+psalm.*failed.*\\s\\|\\s(?:/app/)?([^\\s].*):(\\d+):(\\d+):(\\w+)\\s-\\s(\\w+):\\s(.*)$",
+					"regexp": "\\+psalm\\x1b\\[0m\\s\\|\\s(?:/app/)?([^\\s].*):(\\d+):(\\d+):(\\w+)\\s-\\s(\\w+):\\s(.*)$",
 					"file": 1,
 					"line": 2,
 					"column": 3,

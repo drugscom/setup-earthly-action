@@ -4,11 +4,11 @@
 			"owner": "parallel-lint",
 			"pattern": [
 				{
-					"regexp": "\\+parallel-lint.*failed.*\\s\\|\\s+<file name=\"(?:/app/|\\./)?([^\"]+)\">$",
+					"regexp": "\\+parallel-lint\\x1b\\[0m\\s\\|\\s+<file name=\"(?:/app/|\\./)?([^\"]+)\">$",
 					"file": 1
 				},
 				{
-					"regexp": "\\+parallel-lint.*failed.*\\s\\|\\s+<error\\sline=\"(\\d+)\"\\sseverity=\"(\\w+)\"\\smessage=\"(.*)\"\\ssource=\"(.*)\"\\s?/>$",
+					"regexp": "\\+parallel-lint\\x1b\\[0m\\s\\|\\s+<error\\sline=\"(\\d+)\"\\sseverity=\"(\\w+)\"\\smessage=\"(.*)\"\\ssource=\"(.*)\"\\s?/>$",
 					"line": 1,
 					"severity": 2,
 					"message": 3,

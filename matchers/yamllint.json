@@ -4,7 +4,7 @@
 			"owner": "yamllint",
 			"pattern": [
 				{
-					"regexp": "\\+yamllint.*failed.*\\s\\|\\s(?:/app/|\\./)?([^\\s].*):(\\d+):(\\d+):\\s\\[(\\w+)\\]\\s(.*)\\((.*)\\)$",
+					"regexp": "\\+yamllint\\x1b\\[0m\\s\\|\\s(?:/app/|\\./)?([^\\s].*):(\\d+):(\\d+):\\s\\[(\\w+)\\]\\s(.*)\\((.*)\\)$",
 					"file": 1,
 					"line": 2,
 					"column": 3,

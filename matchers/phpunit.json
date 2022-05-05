@@ -4,7 +4,7 @@
 			"owner": "phpunit",
 			"pattern": [
 				{
-					"regexp": "\\+phpunit.*failed.*\\s\\|\\s(?:/app/|\\./)?([^\\s].*):(\\d+):\\s\\[(\\w+)\\]\\s(.*)$",
+					"regexp": "\\+phpunit\\x1b\\[0m\\s\\|\\s(?:/app/|\\./)?([^\\s].*):(\\d+):\\s\\[(\\w+)\\]\\s(.*)$",
 					"file": 1,
 					"line": 2,
 					"severity": 3,
