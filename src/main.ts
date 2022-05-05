@@ -7,7 +7,7 @@ import {exec} from '@actions/exec/lib/exec'
 
 async function run(): Promise<void> {
   try {
-    core.startGroup('install')
+    core.startGroup('Install Earthly')
     let version = core.getInput('version')
 
     const downloadLatest = core.getBooleanInput('download-latest')
@@ -21,23 +21,25 @@ async function run(): Promise<void> {
     await exec(execPath, ['--version'])
     core.endGroup()
 
-    core.startGroup('matchers')
+    core.startGroup('Add problem matchers')
     const matchersPath = path.join(__dirname, '..', 'matchers')
     const matchers = core.getMultilineInput('matchers')
     if (matchers.length > 0) {
-      for (const app of matchers) {
-        const matcherPath = path.join(matchersPath, `${app}-match.json`)
+      for (let matcherFile of matchers) {
+        if (!matcherFile.endsWith('.json')) {
+          matcherFile = `${matcherFile}.json`
+        }
+        const matcherPath = path.join(matchersPath, matcherFile)
         core.info(`##[add-matcher]${matcherPath}`)
       }
     } else {
-      for (const matcher of await (await glob.create(matchersPath, {matchDirectories: false})).glob()) {
-        const matcherPath = path.join(matchersPath, matcher)
-        core.info(`##[add-matcher]${matcherPath}`)
+      for (const matcherFile of await (await glob.create(matchersPath, {matchDirectories: false})).glob()) {
+        core.info(`##[add-matcher]${matcherFile}`)
       }
     }
     core.endGroup()
 
-    core.startGroup('boostrap')
+    core.startGroup('Bootstrap Earthly')
     await exec(execPath, ['bootstrap'])
     core.endGroup()
   } catch (error: any) {

@@ -182,7 +182,7 @@ const exec_1 = __nccwpck_require__(1514);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            core.startGroup('install');
+            core.startGroup('Install Earthly');
             let version = core.getInput('version');
             const downloadLatest = core.getBooleanInput('download-latest');
             const installedDir = yield installer.get(version, downloadLatest);
@@ -191,23 +191,25 @@ function run() {
             let execPath = yield io.which('earthly');
             yield (0, exec_1.exec)(execPath, ['--version']);
             core.endGroup();
-            core.startGroup('matchers');
+            core.startGroup('Add problem matchers');
             const matchersPath = path.join(__dirname, '..', 'matchers');
             const matchers = core.getMultilineInput('matchers');
             if (matchers.length > 0) {
-                for (const app of matchers) {
-                    const matcherPath = path.join(matchersPath, `${app}-match.json`);
+                for (let matcherFile of matchers) {
+                    if (!matcherFile.endsWith('.json')) {
+                        matcherFile = `${matcherFile}.json`;
+                    }
+                    const matcherPath = path.join(matchersPath, matcherFile);
                     core.info(`##[add-matcher]${matcherPath}`);
                 }
             }
             else {
-                for (const matcher of yield (yield glob.create(matchersPath, { matchDirectories: false })).glob()) {
-                    const matcherPath = path.join(matchersPath, matcher);
-                    core.info(`##[add-matcher]${matcherPath}`);
+                for (const matcherFile of yield (yield glob.create(matchersPath, { matchDirectories: false })).glob()) {
+                    core.info(`##[add-matcher]${matcherFile}`);
                 }
             }
             core.endGroup();
-            core.startGroup('boostrap');
+            core.startGroup('Bootstrap Earthly');
             yield (0, exec_1.exec)(execPath, ['bootstrap']);
             core.endGroup();
         }
