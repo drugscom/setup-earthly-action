@@ -4,10 +4,9 @@ name: Bump package version
 'on':
   pull_request:
     types: [labeled]
-    paths: ['src/**']
 
 concurrency:
-  group: ${{ github.ref }}
+  group: bump-version/${{ github.repo }}/${{ github.ref }}
   cancel-in-progress: true
 
 permissions:

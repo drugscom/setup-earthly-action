@@ -44,6 +44,7 @@ async function run(): Promise<void> {
     await exec(execPath, ['bootstrap'])
     core.endGroup()
   } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     core.setFailed(error.message)
   }
