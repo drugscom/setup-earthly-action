@@ -5,9 +5,6 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "settings": {
-    "import/resolver": "typescript"
-  },
   "rules": {
     "@typescript-eslint/await-thenable": "error",
     "@typescript-eslint/func-call-spacing": ["error", "never"],
