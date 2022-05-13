@@ -1,6 +1,6 @@
 {
   "name": "setup-earthly-action",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Setup Earthy build system",
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
