@@ -3,12 +3,13 @@ import * as glob from '@actions/glob'
 import * as installer from './installer'
 import * as io from '@actions/io'
 import * as path from 'path'
+import * as utils from '@actions/utils'
 import {exec} from '@actions/exec/lib/exec'
 
 async function run(): Promise<void> {
   try {
     core.startGroup('Install Earthly')
-    let version = core.getInput('version')
+    const version = core.getInput('version')
 
     const downloadLatest = core.getBooleanInput('download-latest')
 
@@ -17,13 +18,13 @@ async function run(): Promise<void> {
     core.info(`Adding "${installedDir} to the OS path`)
     core.addPath(installedDir)
 
-    let execPath = await io.which('earthly')
+    const execPath = await io.which('earthly')
     await exec(execPath, ['--version'])
     core.endGroup()
 
     core.startGroup('Add problem matchers')
     const matchersPath = path.join(__dirname, '..', 'matchers')
-    const matchers = core.getMultilineInput('matchers')
+    const matchers = utils.getInputAsArray('matchers')
     if (matchers.length > 0) {
       for (let matcherFile of matchers) {
         if (!matcherFile.endsWith('.json')) {
@@ -42,7 +43,8 @@ async function run(): Promise<void> {
     core.startGroup('Bootstrap Earthly')
     await exec(execPath, ['bootstrap'])
     core.endGroup()
-  } catch (error: any) {
+  } catch (error) {
+    // @ts-ignore
     core.setFailed(error.message)
   }
 }

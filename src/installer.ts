@@ -4,14 +4,14 @@ import * as os from 'os'
 import * as fs from 'fs'
 import {exec} from '@actions/exec/lib/exec'
 
-export async function get(version: string, downloadLatest: boolean) {
+export async function get(version: string, downloadLatest: boolean): Promise<string> {
   try {
     let cachedVersion = version
     if (version === 'latest') {
       cachedVersion = '*'
     }
 
-    let cachedPath = tc.find('earthly', cachedVersion)
+    const cachedPath = tc.find('earthly', cachedVersion)
 
     if (cachedPath && !(version === 'latest' && downloadLatest)) {
       core.info(`Found cached version in "${cachedPath}"`)
@@ -89,10 +89,11 @@ export async function get(version: string, downloadLatest: boolean) {
     core.info(`Successfully cached to "${newCachedPath}"`)
 
     return newCachedPath
-
   } catch (err) {
     if (err instanceof tc.HTTPError && (err.httpStatusCode === 403 || err.httpStatusCode === 429)) {
-      throw new Error(`Received HTTP status code ${err.httpStatusCode}. This usually indicates the rate limit has been exceeded`)
+      throw new Error(
+        `Received HTTP status code ${err.httpStatusCode}. This usually indicates the rate limit has been exceeded`
+      )
     }
 
     throw err
