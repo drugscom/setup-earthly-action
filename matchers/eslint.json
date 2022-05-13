@@ -1,0 +1,18 @@
+{
+	"problemMatcher": [
+		{
+			"owner": "eslint",
+			"pattern": [
+				{
+					"regexp": "\\+eslint\\x1b\\[0m\\s\\|\\s(?:/app/)?([^\\s].*):(\\d+):(\\d+):\\s+(.*)\\s\\[(\\w+)/(.*)\\]$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"message": 4,
+					"severity": 5,
+					"code": 6
+				}
+			]
+		}
+	]
+}
