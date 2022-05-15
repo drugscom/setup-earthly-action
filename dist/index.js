@@ -1251,7 +1251,7 @@ exports.HttpClient = exports.isHttps = exports.HttpClientResponse = exports.Http
 const http = __importStar(__nccwpck_require__(8605));
 const https = __importStar(__nccwpck_require__(7211));
 const pm = __importStar(__nccwpck_require__(2843));
-const tunnel = __importStar(__nccwpck_require__(4294));
+const tunnel = __importStar(__nccwpck_require__(9669));
 var HttpCodes;
 (function (HttpCodes) {
     HttpCodes[HttpCodes["OK"] = 200] = "OK";
@@ -2881,7 +2881,7 @@ exports.HttpClient = exports.isHttps = exports.HttpClientResponse = exports.Http
 const http = __importStar(__nccwpck_require__(8605));
 const https = __importStar(__nccwpck_require__(7211));
 const pm = __importStar(__nccwpck_require__(3466));
-const tunnel = __importStar(__nccwpck_require__(4294));
+const tunnel = __importStar(__nccwpck_require__(9669));
 var HttpCodes;
 (function (HttpCodes) {
     HttpCodes[HttpCodes["OK"] = 200] = "OK";
@@ -6178,7 +6178,7 @@ exports.HttpClient = exports.isHttps = exports.HttpClientResponse = exports.Http
 const http = __importStar(__nccwpck_require__(8605));
 const https = __importStar(__nccwpck_require__(7211));
 const pm = __importStar(__nccwpck_require__(2895));
-const tunnel = __importStar(__nccwpck_require__(4294));
+const tunnel = __importStar(__nccwpck_require__(9669));
 var HttpCodes;
 (function (HttpCodes) {
     HttpCodes[HttpCodes["OK"] = 200] = "OK";
@@ -8429,7 +8429,11 @@ function coerce (version, options) {
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -8456,22 +8460,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.waitForPathLock = exports.sleep = exports.setTimer = exports.safeStat = exports.pathExists = exports.pathIsOk = exports.pathIsLocked = exports.okPath = exports.gitEventIsPushTag = exports.gitEventIsPushHead = exports.gitBranchIsLatest = exports.getPathLock = exports.getInputAsString = exports.getInputAsBool = exports.getInputAsArray = exports.getGitRef = exports.fileExist = exports.directoryExist = exports.gitRefRegex = void 0;
+exports.waitForPathLock = exports.sleep = exports.setTimer = exports.safeStat = exports.pathExists = exports.pathIsOk = exports.pathIsLocked = exports.okPath = exports.gitEventIsPushTag = exports.gitEventIsPushHead = exports.gitBranchIsLatest = exports.getPathLock = exports.getInputAsString = exports.getInputAsBool = exports.getInputAsArray = exports.getGitRef = exports.fileExist = exports.directoryExist = exports.gitRefTagRegex = exports.gitRefHeadRegex = exports.gitRefRegex = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const fs = __importStar(__nccwpck_require__(5747));
 const fspath = __importStar(__nccwpck_require__(5622));
 const github = __importStar(__nccwpck_require__(5438));
 exports.gitRefRegex = /^refs\/(:?heads|tags)\//;
+exports.gitRefHeadRegex = /^refs\/heads\//;
+exports.gitRefTagRegex = /^refs\/tags\//;
 function directoryExist(path, followSymLinks = true) {
-    return (pathExists(path, followSymLinks) &&
-        // @ts-ignore
-        safeStat(path, followSymLinks).isDirectory());
+    if (!pathExists(path, followSymLinks)) {
+        return false;
+    }
+    const pathStat = safeStat(path, followSymLinks);
+    if (!pathStat) {
+        return false;
+    }
+    return pathStat.isDirectory();
 }
 exports.directoryExist = directoryExist;
 function fileExist(path, followSymLinks = true) {
-    return (pathExists(path, followSymLinks) &&
-        // @ts-ignore
-        (safeStat(path, followSymLinks).isFile() || safeStat(path, followSymLinks).isSymbolicLink()));
+    if (!pathExists(path, followSymLinks)) {
+        return false;
+    }
+    const pathStat = safeStat(path, followSymLinks);
+    if (!pathStat) {
+        return false;
+    }
+    return pathStat.isFile() || pathStat.isSymbolicLink();
 }
 exports.fileExist = fileExist;
 function getGitRef() {
@@ -8491,6 +8507,9 @@ function getInputAsArray(name, options) {
         .flat();
 }
 exports.getInputAsArray = getInputAsArray;
+/**
+ * @deprecated Just use core.getBooleanInput() instead
+ */
 function getInputAsBool(name, options) {
     return core.getBooleanInput(name, options);
 }
@@ -8522,11 +8541,11 @@ function gitBranchIsLatest(latestName = 'master') {
 }
 exports.gitBranchIsLatest = gitBranchIsLatest;
 function gitEventIsPushHead() {
-    return github.context.eventName === 'push' && !!github.context.ref.match(/^refs\/heads\//);
+    return github.context.eventName === 'push' && github.context.ref.startsWith('refs/heads/');
 }
 exports.gitEventIsPushHead = gitEventIsPushHead;
 function gitEventIsPushTag() {
-    return github.context.eventName === 'push' && !!github.context.ref.match(/^refs\/tags\//);
+    return github.context.eventName === 'push' && github.context.ref.startsWith('refs/tags/');
 }
 exports.gitEventIsPushTag = gitEventIsPushTag;
 function okPath(path) {
@@ -8558,6 +8577,8 @@ function safeStat(path, followSymLinks = true) {
         return statFunc(path);
     }
     catch (error) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         if (error.code === 'ENOENT') {
             return undefined;
         }
@@ -14361,286 +14382,6 @@ module.exports.PROCESSING_OPTIONS = PROCESSING_OPTIONS;
 
 /***/ }),
 
-/***/ 4294:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-module.exports = __nccwpck_require__(4219);
-
-
-/***/ }),
-
-/***/ 4219:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-var net = __nccwpck_require__(1631);
-var tls = __nccwpck_require__(4016);
-var http = __nccwpck_require__(8605);
-var https = __nccwpck_require__(7211);
-var events = __nccwpck_require__(8614);
-var assert = __nccwpck_require__(2357);
-var util = __nccwpck_require__(1669);
-
-
-exports.httpOverHttp = httpOverHttp;
-exports.httpsOverHttp = httpsOverHttp;
-exports.httpOverHttps = httpOverHttps;
-exports.httpsOverHttps = httpsOverHttps;
-
-
-function httpOverHttp(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = http.request;
-  return agent;
-}
-
-function httpsOverHttp(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = http.request;
-  agent.createSocket = createSecureSocket;
-  agent.defaultPort = 443;
-  return agent;
-}
-
-function httpOverHttps(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = https.request;
-  return agent;
-}
-
-function httpsOverHttps(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = https.request;
-  agent.createSocket = createSecureSocket;
-  agent.defaultPort = 443;
-  return agent;
-}
-
-
-function TunnelingAgent(options) {
-  var self = this;
-  self.options = options || {};
-  self.proxyOptions = self.options.proxy || {};
-  self.maxSockets = self.options.maxSockets || http.Agent.defaultMaxSockets;
-  self.requests = [];
-  self.sockets = [];
-
-  self.on('free', function onFree(socket, host, port, localAddress) {
-    var options = toOptions(host, port, localAddress);
-    for (var i = 0, len = self.requests.length; i < len; ++i) {
-      var pending = self.requests[i];
-      if (pending.host === options.host && pending.port === options.port) {
-        // Detect the request to connect same origin server,
-        // reuse the connection.
-        self.requests.splice(i, 1);
-        pending.request.onSocket(socket);
-        return;
-      }
-    }
-    socket.destroy();
-    self.removeSocket(socket);
-  });
-}
-util.inherits(TunnelingAgent, events.EventEmitter);
-
-TunnelingAgent.prototype.addRequest = function addRequest(req, host, port, localAddress) {
-  var self = this;
-  var options = mergeOptions({request: req}, self.options, toOptions(host, port, localAddress));
-
-  if (self.sockets.length >= this.maxSockets) {
-    // We are over limit so we'll add it to the queue.
-    self.requests.push(options);
-    return;
-  }
-
-  // If we are under maxSockets create a new one.
-  self.createSocket(options, function(socket) {
-    socket.on('free', onFree);
-    socket.on('close', onCloseOrRemove);
-    socket.on('agentRemove', onCloseOrRemove);
-    req.onSocket(socket);
-
-    function onFree() {
-      self.emit('free', socket, options);
-    }
-
-    function onCloseOrRemove(err) {
-      self.removeSocket(socket);
-      socket.removeListener('free', onFree);
-      socket.removeListener('close', onCloseOrRemove);
-      socket.removeListener('agentRemove', onCloseOrRemove);
-    }
-  });
-};
-
-TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
-  var self = this;
-  var placeholder = {};
-  self.sockets.push(placeholder);
-
-  var connectOptions = mergeOptions({}, self.proxyOptions, {
-    method: 'CONNECT',
-    path: options.host + ':' + options.port,
-    agent: false,
-    headers: {
-      host: options.host + ':' + options.port
-    }
-  });
-  if (options.localAddress) {
-    connectOptions.localAddress = options.localAddress;
-  }
-  if (connectOptions.proxyAuth) {
-    connectOptions.headers = connectOptions.headers || {};
-    connectOptions.headers['Proxy-Authorization'] = 'Basic ' +
-        new Buffer(connectOptions.proxyAuth).toString('base64');
-  }
-
-  debug('making CONNECT request');
-  var connectReq = self.request(connectOptions);
-  connectReq.useChunkedEncodingByDefault = false; // for v0.6
-  connectReq.once('response', onResponse); // for v0.6
-  connectReq.once('upgrade', onUpgrade);   // for v0.6
-  connectReq.once('connect', onConnect);   // for v0.7 or later
-  connectReq.once('error', onError);
-  connectReq.end();
-
-  function onResponse(res) {
-    // Very hacky. This is necessary to avoid http-parser leaks.
-    res.upgrade = true;
-  }
-
-  function onUpgrade(res, socket, head) {
-    // Hacky.
-    process.nextTick(function() {
-      onConnect(res, socket, head);
-    });
-  }
-
-  function onConnect(res, socket, head) {
-    connectReq.removeAllListeners();
-    socket.removeAllListeners();
-
-    if (res.statusCode !== 200) {
-      debug('tunneling socket could not be established, statusCode=%d',
-        res.statusCode);
-      socket.destroy();
-      var error = new Error('tunneling socket could not be established, ' +
-        'statusCode=' + res.statusCode);
-      error.code = 'ECONNRESET';
-      options.request.emit('error', error);
-      self.removeSocket(placeholder);
-      return;
-    }
-    if (head.length > 0) {
-      debug('got illegal response body from proxy');
-      socket.destroy();
-      var error = new Error('got illegal response body from proxy');
-      error.code = 'ECONNRESET';
-      options.request.emit('error', error);
-      self.removeSocket(placeholder);
-      return;
-    }
-    debug('tunneling connection has established');
-    self.sockets[self.sockets.indexOf(placeholder)] = socket;
-    return cb(socket);
-  }
-
-  function onError(cause) {
-    connectReq.removeAllListeners();
-
-    debug('tunneling socket could not be established, cause=%s\n',
-          cause.message, cause.stack);
-    var error = new Error('tunneling socket could not be established, ' +
-                          'cause=' + cause.message);
-    error.code = 'ECONNRESET';
-    options.request.emit('error', error);
-    self.removeSocket(placeholder);
-  }
-};
-
-TunnelingAgent.prototype.removeSocket = function removeSocket(socket) {
-  var pos = this.sockets.indexOf(socket)
-  if (pos === -1) {
-    return;
-  }
-  this.sockets.splice(pos, 1);
-
-  var pending = this.requests.shift();
-  if (pending) {
-    // If we have pending requests and a socket gets closed a new one
-    // needs to be created to take over in the pool for the one that closed.
-    this.createSocket(pending, function(socket) {
-      pending.request.onSocket(socket);
-    });
-  }
-};
-
-function createSecureSocket(options, cb) {
-  var self = this;
-  TunnelingAgent.prototype.createSocket.call(self, options, function(socket) {
-    var hostHeader = options.request.getHeader('host');
-    var tlsOptions = mergeOptions({}, self.options, {
-      socket: socket,
-      servername: hostHeader ? hostHeader.replace(/:.*$/, '') : options.host
-    });
-
-    // 0 is dummy port for v0.6
-    var secureSocket = tls.connect(0, tlsOptions);
-    self.sockets[self.sockets.indexOf(socket)] = secureSocket;
-    cb(secureSocket);
-  });
-}
-
-
-function toOptions(host, port, localAddress) {
-  if (typeof host === 'string') { // since v0.10
-    return {
-      host: host,
-      port: port,
-      localAddress: localAddress
-    };
-  }
-  return host; // for v0.11 or later
-}
-
-function mergeOptions(target) {
-  for (var i = 1, len = arguments.length; i < len; ++i) {
-    var overrides = arguments[i];
-    if (typeof overrides === 'object') {
-      var keys = Object.keys(overrides);
-      for (var j = 0, keyLen = keys.length; j < keyLen; ++j) {
-        var k = keys[j];
-        if (overrides[k] !== undefined) {
-          target[k] = overrides[k];
-        }
-      }
-    }
-  }
-  return target;
-}
-
-
-var debug;
-if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
-  debug = function() {
-    var args = Array.prototype.slice.call(arguments);
-    if (typeof args[0] === 'string') {
-      args[0] = 'TUNNEL: ' + args[0];
-    } else {
-      args.unshift('TUNNEL:');
-    }
-    console.error.apply(console, args);
-  }
-} else {
-  debug = function() {};
-}
-exports.debug = debug; // for test
-
-
-/***/ }),
-
 /***/ 5030:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -16760,6 +16501,14 @@ module.exports = eval("require")("encoding");
 
 /***/ }),
 
+/***/ 9669:
+/***/ ((module) => {
+
+module.exports = eval("require")("tunnel");
+
+
+/***/ }),
+
 /***/ 68:
 /***/ ((module) => {
 
@@ -16824,14 +16573,6 @@ module.exports = require("https");;
 
 /***/ }),
 
-/***/ 1631:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("net");;
-
-/***/ }),
-
 /***/ 2087:
 /***/ ((module) => {
 
@@ -16877,14 +16618,6 @@ module.exports = require("string_decoder");;
 
 "use strict";
 module.exports = require("timers");;
-
-/***/ }),
-
-/***/ 4016:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("tls");;
 
 /***/ }),
 
