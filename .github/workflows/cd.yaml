@@ -8,14 +8,13 @@ name: CD
   workflow_dispatch:
 
 concurrency:
-  group: cd/${{ github.repo }}/${{ github.ref }}
-  cancel-in-progress: true
+  group: CD-new-release/${{ github.repo }}/${{ github.ref }}
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  new-release:
     name: Publish release
     runs-on: ubuntu-latest
     steps:
