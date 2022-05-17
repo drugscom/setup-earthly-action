@@ -4,7 +4,7 @@
 			"owner": "jshint",
 			"pattern": [
 				{
-					"regexp": "\\+jshint\\x1b\\[0m\\s\\|\\s(?:/app/)?([^\\s].*):(\\d+):(\\d+):\\s+(.*)\\s\\[(\\w+)/(.*)\\]$",
+					"regexp": "\\+jshint\\x1b\\[0m\\s\\|\\s(?:/app/)?([^\\s].*):(\\d+):(\\d+):\\s+(.*)$",
 					"file": 1,
 					"line": 2,
 					"column": 3,
