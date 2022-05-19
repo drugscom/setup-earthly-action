@@ -1,0 +1,24 @@
+{
+	"problemMatcher": [
+		{
+			"owner": "onceover",
+			"pattern": [
+				{
+					"regexp": "\\+onceover\\x1b\\[0m\\s\\|   errors:$"
+				},
+				{
+					"regexp": "\\+onceover\\x1b\\[0m\\s\\|     ([^ ].*)$",
+					"message": 1
+				},
+				{
+					"regexp": "\\+onceover\\x1b\\[0m\\s\\|       file:\\s(.*)$",
+					"file": 1
+				},
+				{
+					"regexp": "\\+onceover\\x1b\\[0m\\s\\|       line:\\s(\\d+)$",
+					"line": 1
+				}
+			]
+		}
+	]
+}
