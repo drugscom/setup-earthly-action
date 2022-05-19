@@ -1,0 +1,17 @@
+{
+	"problemMatcher": [
+		{
+			"owner": "puppet-lint",
+			"pattern": [
+				{
+					"regexp": "\\+puppet-lint\\x1b\\[0m\\s\\|\\s(?:/app/)?([^\\s]*)\\s-\\s(\\w+):\\s(.+)\\son\\sline\\s(\\d+)\\s\\(check:\\s(.+)\\)$",
+					"file": 1,
+					"severity": 2,
+					"message": 3,
+					"line": 4,
+					"code": 5
+				}
+			]
+		}
+	]
+}
