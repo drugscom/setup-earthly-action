@@ -1,0 +1,17 @@
+{
+	"problemMatcher": [
+		{
+			"owner": "shellcheck",
+			"pattern": [
+				{
+					"regexp": "\\+shellcheck\\x1b\\[0m\\s\\|\\s(?:/app/)?([^\\s]*):(\\d+):(\\d+):\\s+(.*)\\s\\[(.*)\\]$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"message": 4,
+					"code": 5
+				}
+			]
+		}
+	]
+}
