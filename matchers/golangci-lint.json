@@ -4,7 +4,7 @@
 			"owner": "golangci-lint",
 			"pattern": [
 				{
-					"regexp": "\\+golangci-lint\\x1b\\[0m\\s\\|\\s(?:/app/)?([^\\s].*):(\\d+):(\\d+):\\s+([^(]+)\\s\\(([^)]+)\\)$",
+					"regexp": "\\+golangci-lint\\x1b\\[0m\\s\\|\\s(?:/app/)?([^\\s][^:]*):(\\d+):(?:(\\d+):)?\\s+([^(]+)\\s\\(([^)]+)\\)$",
 					"file": 1,
 					"line": 2,
 					"column": 3,
