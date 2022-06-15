@@ -1,0 +1,15 @@
+{
+	"problemMatcher": [
+		{
+			"owner": "golangci-lint-warnings",
+			"pattern": [
+				{
+					"regexp": "\\+golangci-lint\\x1b\\[0m\\s\\|\\slevel=(\\w+)\\smsg=\"\\[([^]]+)\\]\\s(.*)\"$",
+					"severity": 1,
+					"code": 2,
+					"message": 3
+				}
+			]
+		}
+	]
+}
