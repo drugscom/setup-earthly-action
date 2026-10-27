@@ -27,11 +27,12 @@ eslint:
   COPY .prettierignore .
   COPY .prettierrc .
 
+  # The typescript-eslint plugin is nested under eslint-plugin-github (it needs v6, the root parser is v7)
   ARG CI
   IF [ "${CI}" = "true" ]
-    RUN npx -- eslint --format unix src
+    RUN npx -- eslint --resolve-plugins-relative-to node_modules/eslint-plugin-github --format unix src
   ELSE
-    RUN npx -- eslint --color src
+    RUN npx -- eslint --resolve-plugins-relative-to node_modules/eslint-plugin-github --color src
   END
 
 npm:
