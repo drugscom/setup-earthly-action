@@ -1,7 +1,7 @@
 name: 'Setup Earthly'
 description: 'Setup Earthy build system'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'
 inputs:
   version:
