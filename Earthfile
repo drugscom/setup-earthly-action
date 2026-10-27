@@ -1,6 +1,6 @@
 VERSION 0.6
 
-FROM node:24
+FROM node:20
 WORKDIR /app
 
 all:
